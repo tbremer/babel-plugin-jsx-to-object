@@ -4,20 +4,21 @@ export default function ({types: t}) {
     visitor: {
       JSXElement: function(path) {
         console.log('ELEMENT');
+        console.log(this);
         let type = path.get('openingElement').get('name').node.name;
         // let children = path.get('children').map(() => {
         //   return 'kid';
         // });
         let attributes = path.get('openingElement').get('attributes').map(() => {
           return 'attribute';
-        })
+        });
 
         console.log(type);
         // console.log(children);
         console.log(attributes);
       }
     }
-  }
+  };
 }
 
 // export default function ({types: t}) {

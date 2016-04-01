@@ -2,7 +2,7 @@ import assert from 'assert';
 import { transform } from 'babel-core';
 import plugin from '../src';
 
-const transformToJSON (str) => {};
+// const transformToJSON = (str) => {};
 
 describe('babel-plugin-jsx-to-object', () => {
 
@@ -39,10 +39,10 @@ describe('babel-plugin-jsx-to-object', () => {
   /**
    * ELEMENT WITH MANY CHILDREN
    */
-  it('TRANSFORM ELEMENT WITH MANY CHILDREN', () => {});
-  //   const FIXTURE = `<div booelan={this.props.foo}><section>{this.props.children}</section></div>`;
-  //   let code = transform(FIXTURE, { plugins: [plugin] }).code;
+  it('TRANSFORM ELEMENT WITH MANY CHILDREN', () => {
+    const FIXTURE = `<div booelan={this.props.foo}><section>{this.props.children}</section></div>`;
+    let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
-  //   console.log(code);
-  // });
+    console.log(code);
+  });
 })
