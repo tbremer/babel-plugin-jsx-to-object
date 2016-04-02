@@ -6,7 +6,7 @@
   "scripts": {
     "release": "babel src --out-dir dist",
     "test": "mocha --compilers js:babel-core/register test/test.js",
-    "watch": "node test --watch",
+    "watch": "npm run test -- --watch",
     "prepublish": "npm test && npm run release"
   },
   "author": "",

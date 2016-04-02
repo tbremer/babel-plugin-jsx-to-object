@@ -34,15 +34,33 @@ describe('babel-plugin-jsx-to-object', () => {
   /**
    * ELEMENT WITH CHILD
    */
-  it('TRANSFORM ELEMENT WITH CHILD', () => {});
+  it('TRANSFORM ELEMENT WITH CHILD', () => {
+    const FIXTURE = 'let ace = <div booelan><section>string</section></div>';
+
+    const expectedObj = {
+      elementName: 'div',
+      attributes: { boolean: true },
+      children: [
+        {
+          elementName: 'section',
+          children: [
+            'string'
+          ]
+        }
+      ]
+    };
+
+    const expected = `let ace = ${JSON.stringify(expectedObj, null, 2)};`;
+    let code = transform(FIXTURE, { plugins: [plugin] }).code;
+
+    console.log(code); //eslint-disable-line
+    // console.log(expected); //eslint-disable-line
+
+    assert.deepEqual(code, expected);
+  });
 
   /**
    * ELEMENT WITH MANY CHILDREN
    */
-  it('TRANSFORM ELEMENT WITH MANY CHILDREN', () => {
-    const FIXTURE = `<div booelan={this.props.foo}><section>{this.props.children}</section></div>`;
-    let code = transform(FIXTURE, { plugins: [plugin] }).code;
-
-    console.log(code);
-  });
-})
+  it('TRANSFORM ELEMENT WITH MANY CHILDREN', () => {});
+});
