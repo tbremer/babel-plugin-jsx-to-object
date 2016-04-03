@@ -35,7 +35,7 @@ describe('babel-plugin-jsx-to-object', () => {
    * ELEMENT WITH CHILD
    */
   it('TRANSFORM ELEMENT WITH CHILD', () => {
-    const FIXTURE = 'let ace = <div booelan><section>string</section></div>';
+    const FIXTURE = '<div boolean><section>string</section></div>';
 
     const expectedObj = {
       elementName: 'div',
@@ -50,7 +50,7 @@ describe('babel-plugin-jsx-to-object', () => {
       ]
     };
 
-    const expected = `let ace = ${JSON.stringify(expectedObj, null, 2)};`;
+    const expected = `(${JSON.stringify(expectedObj, null, 2)});`;
     let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
     console.log(code); //eslint-disable-line
