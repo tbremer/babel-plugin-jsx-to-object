@@ -3,9 +3,15 @@ export default function ({types: t}) {
     const OPENING_ELEMENT = path.get('openingElement'),
     elementName = t.StringLiteral(OPENING_ELEMENT.node.name.name),
     attributes = t.ObjectExpression(OPENING_ELEMENT.get('attributes').map((attr) => {
+      let attrValue = (
+        attr.node.value === null ? t.BooleanLiteral(true) : attr.node.value
+      );
+
+      if (/JSXExpressionContainer/.test(attrValue.type)) attrValue = attrValue.expression;
+
       return t.ObjectProperty(
         t.StringLiteral(attr.get('name').node.name),
-        (attr.node.value === null ? t.BooleanLiteral(true) : attr.get('value'))
+        attrValue
       );
     })),
     children = t.ArrayExpression(path.get('children').map(() => {
