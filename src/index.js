@@ -14,9 +14,7 @@ export default function ({types: t}) {
         attrValue
       );
     })),
-    children = t.ArrayExpression(path.get('children').map(() => {
-      return t.StringLiteral('foo');
-    }));
+    children = t.ArrayExpression(path.get('children').map(child => generateElement(child)));
 
     return t.ObjectExpression([
       t.ObjectProperty(t.StringLiteral('elementName'), elementName),
