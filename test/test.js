@@ -154,6 +154,35 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(ASSERT, EXPECTED);
     });
 
+    it('Mutliple children', () => {
+      const FIXTURE = '(<div><div></div><div></div><div></div></div>)';
+      const EXPECTED_OBJ = {
+        elementName: 'div',
+        attributes: {},
+        children: [{
+          elementName: 'div',
+          attributes: {},
+          children: []
+        },
+        {
+          elementName: 'div',
+          attributes: {},
+          children: []
+        },
+        {
+          elementName: 'div',
+          attributes: {},
+          children: []
+        },]
+      };
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
+    });
+
     it('Single self-closing child', () => {
       const FIXTURE = '(<div><br /></div>)';
       const EXPECTED_OBJ = {
@@ -172,5 +201,58 @@ describe('babel-plugin-jsx-to-object', () => {
 
       assert.deepEqual(ASSERT, EXPECTED);
     });
+
+    it('Multiple self-closing children', () => {
+      const FIXTURE = '(<div><br /><br /><br /></div>)';
+      const EXPECTED_OBJ = {
+        elementName: 'div',
+        attributes: {},
+        children: [{
+          elementName: 'br',
+          attributes: {},
+          children: []
+        },
+        {
+          elementName: 'br',
+          attributes: {},
+          children: []
+        },
+        {
+          elementName: 'br',
+          attributes: {},
+          children: []
+        }]
+      };
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
+    });
+
+    it('Grand children', () => {
+      const FIXTURE = '(<div><div><br /></div></div>)';
+      const EXPECTED_OBJ = {
+        elementName: 'div',
+        attributes: {},
+        children: [{
+          elementName: 'div',
+          attributes: {},
+          children: [{
+            elementName: 'br',
+            attributes: {},
+            children: []
+          }]
+        }]
+      };
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
+    });
+
   });
 });
