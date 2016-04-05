@@ -159,21 +159,23 @@ describe('babel-plugin-jsx-to-object', () => {
       const EXPECTED_OBJ = {
         elementName: 'div',
         attributes: {},
-        children: [{
-          elementName: 'div',
-          attributes: {},
-          children: []
-        },
-        {
-          elementName: 'div',
-          attributes: {},
-          children: []
-        },
-        {
-          elementName: 'div',
-          attributes: {},
-          children: []
-        },]
+        children: [
+          {
+            elementName: 'div',
+            attributes: {},
+            children: []
+          },
+          {
+            elementName: 'div',
+            attributes: {},
+            children: []
+          },
+          {
+            elementName: 'div',
+            attributes: {},
+            children: []
+          }
+        ]
       };
 
       const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
@@ -207,21 +209,23 @@ describe('babel-plugin-jsx-to-object', () => {
       const EXPECTED_OBJ = {
         elementName: 'div',
         attributes: {},
-        children: [{
-          elementName: 'br',
-          attributes: {},
-          children: []
-        },
-        {
-          elementName: 'br',
-          attributes: {},
-          children: []
-        },
-        {
-          elementName: 'br',
-          attributes: {},
-          children: []
-        }]
+        children: [
+          {
+            elementName: 'br',
+            attributes: {},
+            children: []
+          },
+          {
+            elementName: 'br',
+            attributes: {},
+            children: []
+          },
+          {
+            elementName: 'br',
+            attributes: {},
+            children: []
+          }
+        ]
       };
 
       const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
