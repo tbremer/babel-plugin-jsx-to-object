@@ -1,8 +1,13 @@
 import assert from 'assert';
 import { transform } from 'babel-core';
+import { parse } from 'babylon';
+import traverse from 'babel-traverse';
 import plugin from '../src';
 
+const removeProps = traverse.removeProperties;
+
 describe('babel-plugin-jsx-to-object', () => {
+
 
   describe('SINGLE ELEMENTS', () => {
     it('transforms single elements', () => {
@@ -12,10 +17,12 @@ describe('babel-plugin-jsx-to-object', () => {
         attributes: {},
         children: []
       };
-      const EXPECTED = `(${JSON.stringify(EXPECTED_OBJ)});`;
-      let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
-      assert.deepEqual(code.replace(/\s/g, ''), EXPECTED);
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
     });
 
     it('transforms single self-closing elements', () => {
@@ -25,10 +32,13 @@ describe('babel-plugin-jsx-to-object', () => {
         attributes: {},
         children: []
       };
-      const EXPECTED = `(${JSON.stringify(EXPECTED_OBJ)});`;
-      let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
-      assert.deepEqual(code.replace(/\s/g, ''), EXPECTED);
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
     });
 
     it('transforms single elements with string attributes', () => {
@@ -38,10 +48,12 @@ describe('babel-plugin-jsx-to-object', () => {
         attributes: { attr: 'string' },
         children: []
       };
-      const EXPECTED = `(${JSON.stringify(EXPECTED_OBJ)});`;
-      let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
-      assert.deepEqual(code.replace(/\s/g, ''), EXPECTED);
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
     });
 
     it('transforms single elements with (truthy) boolean attributes', () => {
@@ -51,10 +63,12 @@ describe('babel-plugin-jsx-to-object', () => {
         attributes: { boolean: true },
         children: []
       };
-      const EXPECTED = `(${JSON.stringify(EXPECTED_OBJ)});`;
-      let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
-      assert.deepEqual(code.replace(/\s/g, ''), EXPECTED);
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
     });
 
     it('transforms single elements with (true) boolean attributes', () => {
@@ -64,10 +78,12 @@ describe('babel-plugin-jsx-to-object', () => {
         attributes: { boolean: true },
         children: []
       };
-      const EXPECTED = `(${JSON.stringify(EXPECTED_OBJ)});`;
-      let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
-      assert.deepEqual(code.replace(/\s/g, ''), EXPECTED);
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
     });
 
     it('transforms single elements with (false) boolean attributes', () => {
@@ -77,16 +93,45 @@ describe('babel-plugin-jsx-to-object', () => {
         attributes: { boolean: false },
         children: []
       };
-      const EXPECTED = `(${JSON.stringify(EXPECTED_OBJ)});`;
-      let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
-      assert.deepEqual(code.replace(/\s/g, ''), EXPECTED);
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
     });
 
-    // it('transforms single elements with Numeric attributes', () => assert.deepEqual(true, false));
-    // it('transforms single elements with Array attributes', () => assert.deepEqual(true, false));
-    // it('transforms single elements with Object attributes', () => assert.deepEqual(true, false));
-    // it('transforms single elements with Spread attributes', () => assert.deepEqual(true, false));
+    it('transforms single elements with Numeric attributes', () => {
+      const FIXTURE = '(<div number={1} />)';
+      const EXPECTED_OBJ = {
+        elementName: 'div',
+        attributes: { number: 1 },
+        children: []
+      };
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
+    });
+
+    it('transforms single elements with Array attributes', () => {
+      const FIXTURE = "(<div arr={[1, 2, 'foo', false]} />)";
+      const EXPECTED = "({'elementName':'div','attributes':{'arr':[1,2,'foo',false]},'children':[]});";
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
+
+      assert.deepEqual(CODE, EXPECTED);
+    });
+
+    it('transforms single elements with Object attributes', () => {
+      const FIXTURE = "(<div obj={{foo: 'bar'}} />)";
+      const EXPECTED = "({'elementName':'div','attributes':{'obj':{foo:'bar'}},'children':[]});";
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
+      assert.deepEqual(CODE, EXPECTED);
+    });
   });
 
   describe('ELEMENT WITH CHILDREN', () => {
@@ -101,11 +146,14 @@ describe('babel-plugin-jsx-to-object', () => {
           children: []
         }]
       };
-      const EXPECTED = `(${JSON.stringify(EXPECTED_OBJ)});`;
-      let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
-      assert.deepEqual(code.replace(/\s/g, ''), EXPECTED);
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
     });
+
     it('Single self-closing child', () => {
       const FIXTURE = '(<div><br /></div>)';
       const EXPECTED_OBJ = {
@@ -117,43 +165,12 @@ describe('babel-plugin-jsx-to-object', () => {
           children: []
         }]
       };
-      const EXPECTED = `(${JSON.stringify(EXPECTED_OBJ)});`;
-      let code = transform(FIXTURE, { plugins: [plugin] }).code;
 
-      assert.deepEqual(code.replace(/\s/g, ''), EXPECTED);
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
     });
   });
-
-  /**
-   * ELEMENT WITH CHILD
-   */
-  // it('TRANSFORM ELEMENT WITH CHILD', () => {
-  //   const FIXTURE = '<div boolean><section>string</section></div>';
-
-  //   const expectedObj = {
-  //     elementName: 'div',
-  //     attributes: { boolean: true },
-  //     children: [
-  //       {
-  //         elementName: 'section',
-  //         children: [
-  //           'string'
-  //         ]
-  //       }
-  //     ]
-  //   };
-
-  //   const expected = `(${JSON.stringify(expectedObj, null, 2)});`;
-  //   let code = transform(FIXTURE, { plugins: [plugin] }).code;
-
-  //   console.log(code); //eslint-disable-line
-  //   // console.log(expected); //eslint-disable-line
-
-  //   assert.deepEqual(code, expected);
-  // });
-
-  /**
-   * ELEMENT WITH MANY CHILDREN
-   */
-  //it('TRANSFORM ELEMENT WITH MANY CHILDREN', () => {});
 });

@@ -1,13 +1,21 @@
 export default function ({types: t}) {
-  const generateElement = (path) => {
+  const generateElement = (path, file) => {
     const OPENING_ELEMENT = path.get('openingElement'),
     elementName = t.StringLiteral(OPENING_ELEMENT.node.name.name),
+    /**
+     * MAPPING MIGHT HAVE TO GO AWAY TO SUPPORT JSX SPREAD ATTRIBUTES
+     * @url https://github.com/babel/babel/blob/master/packages/babel-helper-builder-react-jsx/src/index.js#L118
+     */
     attributes = t.ObjectExpression(OPENING_ELEMENT.get('attributes').map((attr) => {
       let attrValue = (
         attr.node.value === null ? t.BooleanLiteral(true) : attr.node.value
       );
 
-      if (/JSXExpressionContainer/.test(attrValue.type)) attrValue = attrValue.expression;
+      if (attrValue && /JSXExpressionContainer/.test(attrValue.type)) attrValue = attrValue.expression;
+
+      if (!attrValue) {
+        attrValue = t.callExpression(file.addHelper('extends'), objs);
+      }
 
       return t.ObjectProperty(
         t.StringLiteral(attr.get('name').node.name),
@@ -26,9 +34,9 @@ export default function ({types: t}) {
   return {
     inherits: require('babel-plugin-syntax-jsx'),
     visitor: {
-      JSXElement: function(path) {
+      JSXElement: function(path, file) {
         path.replaceWith(
-          generateElement(path)
+          generateElement(path, file)
         );
       }
     }
