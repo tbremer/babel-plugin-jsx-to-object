@@ -4,11 +4,10 @@ import { parse } from 'babylon';
 import traverse from 'babel-traverse';
 import plugin from '../src';
 
+const BABEL_EXTEND = "var _extends=Object.assign||function(target){for(var i=1;i<arguments.length;i++){var source=arguments[i];for(var key in source){if(Object.prototype.hasOwnProperty.call(source,key)){target[key]=source[key];}}}return target;};"
 const removeProps = traverse.removeProperties;
 
 describe('babel-plugin-jsx-to-object', () => {
-
-
   describe('SINGLE ELEMENTS', () => {
     it('transforms single elements', () => {
       const FIXTURE = '(<div></div>)';
@@ -41,7 +40,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(ASSERT, EXPECTED);
     });
 
-/*    it('transforms single elements with string attributes', () => {
+    it('transforms single elements with string attributes', () => {
       const FIXTURE = '(<div attr="string" />)';
       const EXPECTED_OBJ = {
         elementName: 'div',
@@ -132,8 +131,28 @@ describe('babel-plugin-jsx-to-object', () => {
       const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
       assert.deepEqual(CODE, EXPECTED);
     });
-*/
+
+    it('transforms single elements with spread attributes', () => {
+      const FIXTURE = '(<div {...spread} />)';
+      const EXPECTED = '({"elementName":"div","attributes":_extends(spread),"children":null});';
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
+
+      assert(CODE.indexOf(BABEL_EXTEND) !== -1);
+      assert.deepEqual(CODE.replace(BABEL_EXTEND, ''), EXPECTED);
+    });
+
+    it('transforms single elements with spread and other attributes', () => {
+      const FIXTURE = '(<div {...spread} foo="bar" />)';
+      const EXPECTED = '({"elementName":"div","attributes":_extends(spread,{"foo":"bar"}),"children":null});';
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
+
+      assert(CODE.indexOf(BABEL_EXTEND) !== -1);
+      assert.deepEqual(CODE.replace(BABEL_EXTEND, ''), EXPECTED);
+    });
   });
+
 
   describe('ELEMENT WITH CHILDREN', () => {
     it('Single child', () => {
