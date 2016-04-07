@@ -1,3 +1,4 @@
+/* eslint-disable */
 import assert from 'assert';
 import { transform } from 'babel-core';
 import { parse } from 'babylon';
@@ -9,7 +10,7 @@ const removeProps = traverse.removeProperties;
 
 describe('babel-plugin-jsx-to-object', () => {
   describe('SINGLE ELEMENTS', () => {
-    it('transforms single elements', () => {
+    it('transforms elements', () => {
       const FIXTURE = '(<div></div>)';
       const EXPECTED_OBJ = {
         elementName: 'div',
@@ -24,7 +25,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(ASSERT, EXPECTED);
     });
 
-    it('transforms single self-closing elements', () => {
+    it('transforms self-closing elements', () => {
       const FIXTURE = '(<br />)';
       const EXPECTED_OBJ = {
         elementName: 'br',
@@ -40,7 +41,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(ASSERT, EXPECTED);
     });
 
-    it('transforms single elements with string attributes', () => {
+    it('transforms elements with string attributes', () => {
       const FIXTURE = '(<div attr="string" />)';
       const EXPECTED_OBJ = {
         elementName: 'div',
@@ -55,7 +56,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(ASSERT, EXPECTED);
     });
 
-    it('transforms single elements with (truthy) boolean attributes', () => {
+    it('transforms elements with (truthy) boolean attributes', () => {
       const FIXTURE = '(<div boolean />)';
       const EXPECTED_OBJ = {
         elementName: 'div',
@@ -70,7 +71,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(ASSERT, EXPECTED);
     });
 
-    it('transforms single elements with (true) boolean attributes', () => {
+    it('transforms elements with (true) boolean attributes', () => {
       const FIXTURE = '(<div boolean={true} />)';
       const EXPECTED_OBJ = {
         elementName: 'div',
@@ -85,7 +86,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(ASSERT, EXPECTED);
     });
 
-    it('transforms single elements with (false) boolean attributes', () => {
+    it('transforms elements with (false) boolean attributes', () => {
       const FIXTURE = '(<div boolean={false} />)';
       const EXPECTED_OBJ = {
         elementName: 'div',
@@ -100,7 +101,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(ASSERT, EXPECTED);
     });
 
-    it('transforms single elements with Numeric attributes', () => {
+    it('transforms elements with Numeric attributes', () => {
       const FIXTURE = '(<div number={1} />)';
       const EXPECTED_OBJ = {
         elementName: 'div',
@@ -115,7 +116,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(ASSERT, EXPECTED);
     });
 
-    it('transforms single elements with Array attributes', () => {
+    it('transforms elements with Array attributes', () => {
       const FIXTURE = "(<div arr={[1, 2, 'foo', false]} />)";
       const EXPECTED = "({'elementName':'div','attributes':{'arr':[1,2,'foo',false]},'children':null});";
 
@@ -124,7 +125,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(CODE, EXPECTED);
     });
 
-    it('transforms single elements with Object attributes', () => {
+    it('transforms elements with Object attributes', () => {
       const FIXTURE = "(<div obj={{foo: 'bar'}} />)";
       const EXPECTED = "({'elementName':'div','attributes':{'obj':{foo:'bar'}},'children':null});";
 
@@ -132,7 +133,7 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(CODE, EXPECTED);
     });
 
-    it('transforms single elements with spread attributes', () => {
+    it('transforms elements with spread attributes', () => {
       const FIXTURE = '(<div {...spread} />)';
       const EXPECTED = '({"elementName":"div","attributes":_extends(spread),"children":null});';
 
@@ -142,13 +143,51 @@ describe('babel-plugin-jsx-to-object', () => {
       assert.deepEqual(CODE.replace(BABEL_EXTEND, ''), EXPECTED);
     });
 
-    it('transforms single elements with spread and other attributes', () => {
+    it('transforms elements with a spread attribute and other attribute', () => {
       const FIXTURE = '(<div {...spread} foo="bar" />)';
       const EXPECTED = '({"elementName":"div","attributes":_extends(spread,{"foo":"bar"}),"children":null});';
 
       const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
 
       assert(CODE.indexOf(BABEL_EXTEND) !== -1);
+      assert.deepEqual(CODE.replace(BABEL_EXTEND, ''), EXPECTED);
+    });
+
+    it('transforms elements with spread attribute and multiple attributes', () => {
+      const FIXTURE = '(<div {...spread} foo="bar" bar="baz" baz={ thunk }/>)';
+      const EXPECTED = '({"elementName":"div","attributes":_extends(spread,{"foo":"bar","bar":"baz","baz":thunk}),"children":null});';
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
+
+      assert(CODE.indexOf(BABEL_EXTEND) !== -1);
+      assert.deepEqual(CODE.replace(BABEL_EXTEND, ''), EXPECTED);
+    });
+
+    it('transforms elements with multiple spread attributes', () => {
+      const FIXTURE = '(<div {...spread} {...spread2} {...spread3} />)';
+      const EXPECTED = '({"elementName":"div","attributes":_extends(spread,spread2,spread3),"children":null});';
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
+
+      assert(CODE.indexOf(BABEL_EXTEND) !== -1);
+      assert.deepEqual(CODE.replace(BABEL_EXTEND, ''), EXPECTED);
+    });
+
+    it('transforms elements with functions as attribute values', () => {
+      let FIXTURE = '(<div onClick={ function() { return clickhandler(); } } />)';
+      const EXPECTED = '({"elementName":"div","attributes":{"onClick":function(){return clickhandler();}},"children":null});';
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
+
+      assert.deepEqual(CODE.replace(BABEL_EXTEND, ''), EXPECTED);
+    });
+
+    it('transforms elements with arrow functions as attribute values', () => {
+      let FIXTURE = '(<div onClick={ () => clickhandler() } />)';
+      const EXPECTED = '({"elementName":"div","attributes":{"onClick":() => clickhandler()},"children":null});';
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
+
       assert.deepEqual(CODE.replace(BABEL_EXTEND, ''), EXPECTED);
     });
   });
@@ -296,6 +335,15 @@ describe('babel-plugin-jsx-to-object', () => {
       const ASSERT = removeProps(parse(CODE));
 
       assert.deepEqual(ASSERT, EXPECTED);
+    });
+
+    it('Element with identifier as child', () => {
+      const FIXTURE = '(<div>{foo}</div>)';
+      const EXPECTED = '({"elementName":"div","attributes":null,"children":[foo]});';
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
+
+      assert.deepEqual(CODE.replace(BABEL_EXTEND, ''), EXPECTED);
     });
   });
 });
