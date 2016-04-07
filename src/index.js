@@ -1,5 +1,7 @@
 export default function ({types: t}) {
   const generateElement = (path, file) => {
+    if (/JSXText/.test(path.type)) return t.StringLiteral(path.value);
+
     const OPENING_ELEMENT = path.node ? path.node.openingElement : path.openingElement,
     CHILDREN = path.node ? path.node.children : path.children,
     ELEMENT_ATTRIBUTES = OPENING_ELEMENT.attributes;

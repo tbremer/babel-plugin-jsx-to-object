@@ -4,7 +4,7 @@ import { parse } from 'babylon';
 import traverse from 'babel-traverse';
 import plugin from '../src';
 
-const BABEL_EXTEND = "var _extends=Object.assign||function(target){for(var i=1;i<arguments.length;i++){var source=arguments[i];for(var key in source){if(Object.prototype.hasOwnProperty.call(source,key)){target[key]=source[key];}}}return target;};"
+const BABEL_EXTEND = 'var _extends=Object.assign||function(target){for(var i=1;i<arguments.length;i++){var source=arguments[i];for(var key in source){if(Object.prototype.hasOwnProperty.call(source,key)){target[key]=source[key];}}}return target;};';
 const removeProps = traverse.removeProperties;
 
 describe('babel-plugin-jsx-to-object', () => {
@@ -153,7 +153,6 @@ describe('babel-plugin-jsx-to-object', () => {
     });
   });
 
-
   describe('ELEMENT WITH CHILDREN', () => {
     it('Single child', () => {
       const FIXTURE = '(<div><div></div></div>)';
@@ -272,6 +271,23 @@ describe('babel-plugin-jsx-to-object', () => {
               }
             ]
           }
+        ]
+      };
+
+      const CODE = transform(FIXTURE, { plugins: [ plugin ]}).code;
+      const EXPECTED = removeProps(parse(`(${JSON.stringify(EXPECTED_OBJ)})`));
+      const ASSERT = removeProps(parse(CODE));
+
+      assert.deepEqual(ASSERT, EXPECTED);
+    });
+
+    it('Element with Text child', () => {
+      const FIXTURE = '(<div>hello world</div>)';
+      const EXPECTED_OBJ = {
+        'elementName': 'div',
+        'attributes': null,
+        'children': [
+          'hello world'
         ]
       };
 
