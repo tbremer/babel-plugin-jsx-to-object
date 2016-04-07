@@ -10,8 +10,19 @@
     "watch": "npm run test -- --watch",
     "prepublish": "npm test && npm run release"
   },
-  "author": "",
-  "license": "ISC",
+  "author": {
+    "name": "Tom Bremer",
+    "email": "tom@tbremer.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbremer/babel-plugin-jsx-to-object.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tbremer/babel-plugin-jsx-to-object/issues"
+  },
+  "homepage": "https://github.com/tbremer/babel-plugin-jsx-to-object#readme",
   "devDependencies": {
     "babel-cli": "^6.6.5",
     "babel-core": "^6.7.4",
