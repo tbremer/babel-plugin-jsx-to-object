@@ -1,4 +1,3 @@
-/* eslint-disable */
 import assert from 'assert';
 import { transform } from 'babel-core';
 import { parse } from 'babylon';
@@ -145,7 +144,7 @@ describe('babel-plugin-jsx-to-object', () => {
 
     it('transforms elements with a spread attribute and other attribute', () => {
       const FIXTURE = '(<div {...spread} foo="bar" />)';
-      const EXPECTED = '({"elementName":"div","attributes":_extends(spread,{"foo":"bar"}),"children":null});';
+      const EXPECTED = '({"elementName":"div","attributes":_extends({},spread,{"foo":"bar"}),"children":null});';
 
       const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
 
@@ -155,7 +154,7 @@ describe('babel-plugin-jsx-to-object', () => {
 
     it('transforms elements with spread attribute and multiple attributes', () => {
       const FIXTURE = '(<div {...spread} foo="bar" bar="baz" baz={ thunk }/>)';
-      const EXPECTED = '({"elementName":"div","attributes":_extends(spread,{"foo":"bar","bar":"baz","baz":thunk}),"children":null});';
+      const EXPECTED = '({"elementName":"div","attributes":_extends({},spread,{"foo":"bar","bar":"baz","baz":thunk}),"children":null});';
 
       const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
 
@@ -165,7 +164,7 @@ describe('babel-plugin-jsx-to-object', () => {
 
     it('transforms elements with multiple spread attributes', () => {
       const FIXTURE = '(<div {...spread} {...spread2} {...spread3} />)';
-      const EXPECTED = '({"elementName":"div","attributes":_extends(spread,spread2,spread3),"children":null});';
+      const EXPECTED = '({"elementName":"div","attributes":_extends({},spread,spread2,spread3),"children":null});';
 
       const CODE = transform(FIXTURE, { plugins: [ plugin ], compact: true}).code;
 

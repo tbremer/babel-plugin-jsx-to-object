@@ -47,6 +47,8 @@ export default function ({types: t}) {
     if (_spreads.length) {
       let extension = attrObject ? _spreads.concat(attrObject) : _spreads;
 
+      if (extension.length > 1) extension.unshift(t.ObjectExpression([]));
+
       attrObject = t.callExpression(
         file.addHelper('extends'),
         extension
