@@ -59,7 +59,7 @@ const OPTIONS = {
     children: 'kids'
 };
 
-transform("(<h1 class="title">Hello World</h1>);", { plugins: [ [jsxTransform, OPTIONS] ] })
+transform('(<h1 class="title">Hello World</h1>);', { plugins: [ [jsxTransform, OPTIONS] ] })
 ```
 
 **Becomes:**
@@ -70,7 +70,3 @@ transform("(<h1 class="title">Hello World</h1>);", { plugins: [ [jsxTransform, O
     kids: [ 'hello world' ]
 });
 ```
-
-*Required reading before contributing:*
-* [JSX Type Definitiions](https://github.com/babel/babel/blob/master/packages/babel-types/src/definitions/jsx.js)
-* [Plugin handbook](https://github.com/thejameskyle/babel-handbook)
