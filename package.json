@@ -15,6 +15,9 @@
     "email": "tom@tbremer.com"
   },
   "license": "MIT",
+  "files": [
+    "dist"  
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tbremer/babel-plugin-jsx-to-object.git"
