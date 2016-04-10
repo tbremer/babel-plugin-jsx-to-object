@@ -1,21 +1,26 @@
 export default function ({types: t}) {
-  const generateElement = (path, file, options) => {
-    options = Object.assign({}, {type: 'type', attributes: 'attributes', children: 'children'}, options);
+  const generateElement = (path, state) => {
+    const FILE = state.file,
+    OPTIONS = Object.assign({}, {type: 'type', 'extends': 'extends', attributes: 'attributes', children: 'children'}, state.opts);
 
-    if (!/JSXElement/.test(path.type)) return path.expression ? path.expression : t.StringLiteral(path.value);
+    const NODE = path.node;
 
-    const OPENING_ELEMENT = path.node ? path.node.openingElement : path.openingElement,
-    CHILDREN = path.node ? path.node.children : path.children,
-    ELEMENT_ATTRIBUTES = OPENING_ELEMENT.attributes;
+    if (!/JSXElement/.test(NODE.type)) return NODE.expression ? NODE.expression : t.StringLiteral(NODE.value);
 
-    let elementName = t.StringLiteral(OPENING_ELEMENT.name.name),
-    attributes = ELEMENT_ATTRIBUTES.length ? buildAttributeObject(ELEMENT_ATTRIBUTES, file) : t.NullLiteral(),
-    children = CHILDREN.length ? t.ArrayExpression(CHILDREN.map(child => generateElement(child, file, options))) : t.NullLiteral();
+    const OPENING_ELEMENT = NODE.openingElement,
+    CHILDREN = path.get('children'),
+    ELEMENT_ATTRIBUTES = OPENING_ELEMENT.attributes,
+    EXTENDS = isExtension(OPENING_ELEMENT, path);
+
+    let type = t.StringLiteral(OPENING_ELEMENT.name.name),
+    attributes = ELEMENT_ATTRIBUTES.length ? buildAttributeObject(ELEMENT_ATTRIBUTES, FILE) : t.NullLiteral(),
+    children = CHILDREN.length ? t.ArrayExpression(CHILDREN.map(child => generateElement(child, state))) : t.NullLiteral();
 
     return t.ObjectExpression([
-      t.ObjectProperty(t.StringLiteral(options.type), elementName),
-      t.ObjectProperty(t.StringLiteral(options.attributes), attributes),
-      t.ObjectProperty(t.StringLiteral(options.children), children)
+      t.ObjectProperty(t.StringLiteral(OPTIONS.extends), EXTENDS ? t.Identifier(OPENING_ELEMENT.name.name) : t.NullLiteral()),
+      t.ObjectProperty(t.StringLiteral(OPTIONS.type), EXTENDS ? t.NullLiteral() : type),
+      t.ObjectProperty(t.StringLiteral(OPTIONS.attributes), attributes),
+      t.ObjectProperty(t.StringLiteral(OPTIONS.children), children)
     ]);
   };
 
@@ -62,12 +67,14 @@ export default function ({types: t}) {
     return attrObject;
   };
 
+  const isExtension = (openingElement, path) => path.scope.hasBinding(openingElement.name.name);
+
   return {
     inherits: require('babel-plugin-syntax-jsx'),
     visitor: {
       JSXElement: function(path, state) {
         path.replaceWith(
-          generateElement(path, state.file, state.opts)
+          generateElement(path, state)
         );
       }
     }
