@@ -269,6 +269,31 @@ describe('babel-plugin-jsx-to-object', () => {
   });
 
   describe('REFERENCE NODES', () => {
+    it('Should support declared JSXElements', () => {
+      const FIXTURE = 'const Foo = <div />; <Foo />;';
+      const EXPECTED = 'const Foo={"extends":null,"type":"div","attributes":null,"children":null};({"extends":Foo,"type":null,"attributes":null,"children":null});';
 
+      const ASSERT = transform( FIXTURE, { plugins: [ plugin ], compact:true } ).code;
+
+      assert.deepEqual(ASSERT, EXPECTED);
+    });
+
+    it('Should support imported JSXElements', () => {
+      const FIXTURE = 'import Foo from "foo"; <Foo />;';
+      const EXPECTED = 'import Foo from "foo";({"extends":Foo,"type":null,"attributes":null,"children":null});';
+
+      const ASSERT = transform( FIXTURE, { plugins: [ plugin ], compact:true } ).code;
+
+      assert.deepEqual(ASSERT, EXPECTED);
+    });
+
+    it('Should allow children to be declared', () => {
+      const FIXTURE = 'import {Ul, Li} from "DOM"; <Ul><Li /></Ul>;';
+      const EXPECTED = 'import {Ul, Li} from "DOM";({"extends":Ul,"type":null,"attributes":null,"children":[{"extends":Li,"type":null,"attributes":null,"children":null}]});';
+
+      const ASSERT = transform( FIXTURE, { plugins: [ plugin ], compact:true } ).code;
+
+      assert.deepEqual(ASSERT, EXPECTED);
+    });
   });
 });
