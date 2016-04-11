@@ -95,7 +95,7 @@ const LI = {
             type: null,
             attributes: null,
             children: [ 'Profit' ]
-        },
+        }
     ]
 })
 ```
