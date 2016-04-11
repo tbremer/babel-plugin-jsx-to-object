@@ -40,10 +40,64 @@ The following JSX:
 Returns:
 ```javascript
 ({
+    extends: null,
     type: 'h1',
     attributes: { class: 'title' },
     children: [ 'hello world' ]
 });
+```
+
+The following JSX (with Declared Nodes):
+```javascript
+const UL = <ul />;
+const LI = <li />;
+
+(<UL>
+    <LI>Learn JSX</LI>
+    <LI>Write effiecient UI Libraries</LI>
+    <LI>Profit</LI>
+</UL>);
+```
+Returns:
+```javascript
+const UL = {
+    extends: null,
+    type: 'ul',
+    attributes: null,
+    children: null
+};
+const LI = {
+    extends: null,
+    type: 'li',
+    attributes: null,
+    children: null
+};
+
+({
+    extends: UL,
+    type: null,
+    attributes: null,
+    children: [
+        {
+            extends: LI,
+            type: null,
+            attributes: null,
+            children: [ 'Learn JSX' ]
+        },
+        {
+            extends: LI,
+            type: null,
+            attributes: null,
+            children: [ 'Write efficient UI Libraries' ]
+        },
+        {
+            extends: LI,
+            type: null,
+            attributes: null,
+            children: [ 'Profit' ]
+        },
+    ]
+})
 ```
 
 ## Options
