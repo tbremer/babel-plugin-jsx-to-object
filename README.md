@@ -109,6 +109,7 @@ _All the objects keys can be overidden_
 import jsxTransform from 'babel-plugin-jsx-to-object';
 
 const OPTIONS = {
+    extends: 'elementExtension',
     type: 'elementName',
     attributes: 'args',
     children: 'kids'
@@ -120,6 +121,7 @@ transform('(<h1 class="title">Hello World</h1>);', { plugins: [ [jsxTransform, O
 **Becomes:**
 ```javascript
 ({
+    elementExtension: null,
     elementName: 'h1',
     args: { class: 'title' },
     kids: [ 'hello world' ]
