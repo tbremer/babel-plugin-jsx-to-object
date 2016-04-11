@@ -16,6 +16,7 @@ All React conventions of JSX are support, this includes:
 * Fat Arrow Functions
 * Strings
 * Deeply nested children
+* JSXElements as references to building other JSX Elements
 
 ## Install
 ```shell
