@@ -1,6 +1,6 @@
 {
   "name": "babel-plugin-jsx-to-object",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Transform JSX into opinionated JSON Objects",
   "main": "dist/index.js",
   "scripts": {
